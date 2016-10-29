@@ -1,0 +1,7 @@
+Quadratic Discriminant Analysis
+             precision    recall  f1-score   support
+
+        0.0       0.79      0.57      0.66       102
+        1.0       0.62      0.83      0.71        88
+
+avg / total       0.72      0.69      0.69       190

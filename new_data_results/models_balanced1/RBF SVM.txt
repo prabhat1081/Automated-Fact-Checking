@@ -1,0 +1,7 @@
+RBF SVM
+             precision    recall  f1-score   support
+
+        0.0       1.00      0.05      0.09       102
+        1.0       0.48      1.00      0.64        88
+
+avg / total       0.76      0.49      0.35       190

@@ -1,0 +1,7 @@
+Nearest Neighbors_sel
+             precision    recall  f1-score   support
+
+        0.0       0.72      0.88      0.79       173
+        1.0       0.87      0.70      0.77       193
+
+avg / total       0.80      0.78      0.78       366

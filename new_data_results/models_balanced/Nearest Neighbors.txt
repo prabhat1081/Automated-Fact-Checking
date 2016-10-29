@@ -1,0 +1,7 @@
+Nearest Neighbors
+             precision    recall  f1-score   support
+
+        0.0       0.69      0.69      0.69       102
+        1.0       0.64      0.65      0.64        88
+
+avg / total       0.67      0.67      0.67       190
