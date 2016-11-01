@@ -35,6 +35,7 @@ def init():
 
 def generate_features(filename, classid, output):
 	#topicsall = topicLDA.batch_LDATopicVector(filename)
+	topicsall = topicLDA.batch_LDATopicVector(filename)
 	f = open(filename, "r")
 	index = 0
 	for line in f:
@@ -43,7 +44,6 @@ def generate_features(filename, classid, output):
 			features.extend(extractor(line))
 		features.extend(topicsall[index])
 		index = index + 1
-		exit(0)
 		print(index)
 		features.append(classid)
 		print(" ".join(map(str, features)), file=output)

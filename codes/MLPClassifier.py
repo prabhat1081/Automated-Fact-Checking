@@ -168,6 +168,7 @@ def main(working_dir):
     X,y = X_resampled, y_resampled
 
     X, y = feature_select(X, y)
+    #X, y = feature_select(X, y)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=42)
 
@@ -239,6 +240,7 @@ def main(working_dir):
 if __name__ == '__main__':
     import os
     working_dir = workingdir+"/models_balanced1" #os.argv[-1]
+    working_dir = workingdir+"/models_simple" #os.argv[-1]
     try:
         os.makedirs(working_dir)
     except:
