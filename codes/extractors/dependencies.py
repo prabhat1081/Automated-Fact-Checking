@@ -207,4 +207,8 @@ def dependenciesVector(sentence):
 vector = dependenciesVector('1.5 million jobs created during the worst economic time this country has had since the Great Depression while the rest of the country lost 400,000 jobs.')
 print(vector)
 
+
+
+def feature_names():
+    return map( (lambda x: "dep_"+x), small_mapping.keys())
 # check_pickle()

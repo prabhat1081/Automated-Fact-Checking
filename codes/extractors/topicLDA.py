@@ -59,6 +59,10 @@ def batch_LDATopicVector(filename):
 	return topicsall
 
 
+def feature_names():
+    return ["top_"+ str(i) for i in range(20)]
+
+
 
 
 

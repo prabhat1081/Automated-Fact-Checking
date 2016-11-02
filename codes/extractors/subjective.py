@@ -66,3 +66,7 @@ def subjective_feature(text):
                             cnt_weak =  cnt_weak + 1
                         break
     return [cnt_weak, cnt_strong]
+
+
+def feature_names():
+    return ["sub_weak", "sub_strong"]

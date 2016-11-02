@@ -8,7 +8,7 @@ from collections import Counter
 pp = pprint.PrettyPrinter(indent=4)
 
 
-stopwords = ["-lrb-", "...", "ph"]#get_stopwords("stopwords.txt")
+stopwords = ["-lrb-","-rrb-", "...", "ph"]#get_stopwords("stopwords.txt")
 puncts = list("!';\",.?()`$")
 
 stopwords.extend(puncts)
@@ -17,8 +17,11 @@ print(stopwords)
 
 
 
-def count_bigrams(filename):
+def get_stopwords(filename):
+    words = open(filename, "r")
+    return [ word.strip() for word in words.readlines()]
 
+def count_bigrams(filename):
     source = open(filename, "r")
     cnt = Counter()
     for line in source:
@@ -34,26 +37,30 @@ def count_bigrams(filename):
             #cnt[(last, "</s>")] += 1
     return cnt
 
-def generate_bigrams(threshold, filename):
+def generate_bigrams(threshold, filename, stopwords):
     c = count_bigrams(filename)
+    stopwords = get_stopwords(stopwords)
     bigrams = {}
     k = 0
     for bigram,cn in c.most_common():
+        ## Remove bigrams consisting of only stop words
+        if(bigram[0] in stopwords and bigram[1] in stopwords): continue
 
-        if(cn < threshold): continue
+        ## Break if the threshold is reached
+        if(cn < threshold): break
         bigrams[bigram] =  k
         k = k + 1
 
     return bigrams
 
-def load_bigrams(datapath, threshold, filename):
+def load_bigrams(datapath, threshold, filename. stopwords):
     import pickle
     global bigrams
     try:
         with open(datapath + '/bigrams.pkl', 'rb') as f1:
             bigrams = pickle.load(f1)
     except:
-        bigrams = generate_bigrams(threshold, filename)
+        bigrams = generate_bigrams(threshold, filename, stopwords)
         with open(datapath + '/bigrams.pkl', 'wb') as f1:
             pickle.dump(bigrams, f1)
     print(len(bigrams))
@@ -77,3 +84,7 @@ def bigram_feature(text):
             last = tokeninfo['lemma'].lower()
 
     return feature
+
+
+def feature_names():
+    return map( (lambda x: "bi_"+x[0]+"__"+x[1]), bigrams.keys())

@@ -22,3 +22,7 @@ def pos_features(text):
             if(postag in ["-LRB-", "-RRB-"]): continue
             featurev[tag_mapping[postag]] += 1
     return featurev
+
+
+def feature_names():
+    return map( (lambda x: "pos_"+x), tag_mapping.keys())
