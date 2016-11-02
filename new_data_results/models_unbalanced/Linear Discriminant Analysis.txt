@@ -1,0 +1,7 @@
+Linear Discriminant Analysis
+             precision    recall  f1-score   support
+
+        0.0       0.96      0.99      0.98      2871
+        1.0       0.23      0.06      0.10       111
+
+avg / total       0.94      0.96      0.95      2982

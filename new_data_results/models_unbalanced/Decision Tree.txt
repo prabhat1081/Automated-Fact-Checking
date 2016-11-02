@@ -1,0 +1,7 @@
+Decision Tree
+             precision    recall  f1-score   support
+
+        0.0       0.96      1.00      0.98      2871
+        1.0       0.33      0.01      0.02       111
+
+avg / total       0.94      0.96      0.94      2982

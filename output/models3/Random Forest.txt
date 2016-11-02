@@ -1,0 +1,7 @@
+Random Forest
+             precision    recall  f1-score   support
+
+        0.0       0.72      0.89      0.80       173
+        1.0       0.88      0.69      0.77       193
+
+avg / total       0.80      0.78      0.78       366

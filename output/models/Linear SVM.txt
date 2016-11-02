@@ -1,0 +1,7 @@
+Linear SVM
+             precision    recall  f1-score   support
+
+        0.0       0.98      0.96      0.97      1729
+        1.0       0.77      0.88      0.82       260
+
+avg / total       0.95      0.95      0.95      1989

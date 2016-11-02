@@ -1,0 +1,7 @@
+AdaBoost
+             precision    recall  f1-score   support
+
+        0.0       0.74      0.71      0.72       473
+        1.0       0.72      0.75      0.74       473
+
+avg / total       0.73      0.73      0.73       946
