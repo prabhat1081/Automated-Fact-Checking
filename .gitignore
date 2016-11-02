@@ -96,3 +96,4 @@ stanford-corenlp-full-2015-12-09
 *.tassign
 *.twords
 infoboxEdges.txt
+*.swp
