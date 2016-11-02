@@ -33,6 +33,10 @@ def init():
 	## Initialization complete	
 
 
+def write_feature_names(output):
+	for extractor in extractors.__all__:
+		print(extractors.extractor.feature_names())
+
 def generate_features(filename, classid, output):
 	#topicsall = topicLDA.batch_LDATopicVector(filename)
 	topicsall = topicLDA.batch_LDATopicVector(filename)
@@ -50,11 +54,11 @@ def generate_features(filename, classid, output):
 init()
 positivefile = os.path.join(datapath, "yesfile.txt")
 negfile = os.path.join(datapath, "nofile.txt")
-outputname = os.path.join(workingdir, "features.f")
-output = open(outputname, "w")
-
-generate_features(positivefile, 1, output)
-generate_features(negfile, 0, output)
+#outputname = os.path.join(workingdir, "features.f")
+#output = open(outputname, "w")
+write_feature_names()
+#generate_features(positivefile, 1, output)
+#generate_features(negfile, 0, output)
 
 
 
