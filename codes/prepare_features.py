@@ -4,7 +4,7 @@ from extractors import *
 
 basepath = "/home/bt1/13CS10060/btp"
 datapath = basepath+"/ayush_dataset"
-workingdir = os.path.join(basepath, "new_data_results")
+workingdir = os.path.join(basepath, "output_all_excluded")
 
 
 def get_stopwords(filename):
@@ -17,14 +17,16 @@ extractors = [bigrams.bigram_feature,
  			subjective.subjective_feature,
  			]
 
+extractors_ = [bigrams, dependencies, postags, subjective, topicLDA]
+
 
 def init():
 
 	## Intiliaze bigrams
 	positivefile = os.path.join(datapath, "yesfile.txt")
 	
-	threshold = 11
-	bigrams.load_bigrams(workingdir, threshold, positivefile)
+	threshold = 6
+	bigrams.load_bigrams(workingdir, threshold, positivefile, os.path.join(datapath, "stopwords.txt"))
 
 	## Initilaize subjective lexicon
 	subjective_lexicon = os.path.join(datapath, "subclue.tff")
@@ -34,11 +36,17 @@ def init():
 
 
 def write_feature_names(output):
-	for extractor in extractors.__all__:
-		print(extractors.extractor.feature_names())
+	names = []
+	for extractor in extractors_:
+		ff = extractor.feature_names()
+		print(len(ff))
+		names.extend(ff)
+	names.append("class_label")
+	print(len(names))
+	print(" ".join(names), file=output)
 
 def generate_features(filename, classid, output):
-	#topicsall = topicLDA.batch_LDATopicVector(filename)
+	
 	topicsall = topicLDA.batch_LDATopicVector(filename)
 	f = open(filename, "r")
 	index = 0
@@ -48,17 +56,18 @@ def generate_features(filename, classid, output):
 			features.extend(extractor(line))
 		features.extend(topicsall[index])
 		index = index + 1
-		print(index)
+		if(index % 100 == 0):print(index)
 		features.append(classid)
 		print(" ".join(map(str, features)), file=output)
 init()
-positivefile = os.path.join(datapath, "yesfile.txt")
-negfile = os.path.join(datapath, "nofile.txt")
-#outputname = os.path.join(workingdir, "features.f")
-#output = open(outputname, "w")
-write_feature_names()
-#generate_features(positivefile, 1, output)
-#generate_features(negfile, 0, output)
+positivefile = os.path.join(datapath, "allyesfile.txt")
+negfile = os.path.join(datapath, "allexcludednofile.txt")
+outputname = os.path.join(workingdir, "features.ff")
+
+output = open(outputname, "w")
+write_feature_names(output)
+generate_features(positivefile, 1, output)
+generate_features(negfile, 0, output)
 
 
 

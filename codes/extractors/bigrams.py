@@ -4,11 +4,12 @@ import pprint
 import numpy as np
 import extractors.tokenizer as tokenizer
 from collections import Counter
+import operator
 
 pp = pprint.PrettyPrinter(indent=4)
 
 
-stopwords = ["-lrb-","-rrb-", "...", "ph"]#get_stopwords("stopwords.txt")
+stopwords = ["-lrb-","-rrb-", "...","---", "--", "ph"]#get_stopwords("stopwords.txt")
 puncts = list("!';\",.?()`$")
 
 stopwords.extend(puncts)
@@ -53,7 +54,7 @@ def generate_bigrams(threshold, filename, stopwords):
 
     return bigrams
 
-def load_bigrams(datapath, threshold, filename. stopwords):
+def load_bigrams(datapath, threshold, filename, stopwords):
     import pickle
     global bigrams
     try:
@@ -87,4 +88,5 @@ def bigram_feature(text):
 
 
 def feature_names():
-    return map( (lambda x: "bi_"+x[0]+"__"+x[1]), bigrams.keys())
+    s_big = sorted(bigrams.items(), key=operator.itemgetter(1))
+    return ["bi_"+s[0][0]+"__"+s[0][1] for s in s_big]

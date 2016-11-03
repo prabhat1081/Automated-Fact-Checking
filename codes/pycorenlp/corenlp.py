@@ -34,7 +34,7 @@ class StanfordCoreNLP:
             try:
                 output = json.loads(output, encoding='utf-8', strict=True)
             except:
-                pass
+                output = self.annotate(text, properties)
         return output
 
     def tokensregex(self, text, pattern, filter):

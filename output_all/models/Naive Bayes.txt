@@ -1,0 +1,7 @@
+Naive Bayes
+             precision    recall  f1-score   support
+
+        0.0       0.54      0.91      0.68       111
+        1.0       0.83      0.36      0.50       133
+
+avg / total       0.70      0.61      0.58       244

@@ -1,0 +1,7 @@
+MLP
+             precision    recall  f1-score   support
+
+        0.0       0.74      0.66      0.70        96
+        1.0       0.68      0.76      0.72        93
+
+avg / total       0.71      0.71      0.71       189

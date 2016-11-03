@@ -2,6 +2,8 @@ import pickle
 
 import extractors.tokenizer as tokenizer
 
+import operator
+
 # def check_pickle():
 #     dictOfCheckedDeps = pickle.load(open('newDictOfCheckedDepsPython2.p','rb'))
 #     dictOfUnCheckedDeps = pickle.load(open('newDictOfUnCheckedDepsPython2.p','rb'))
@@ -185,11 +187,10 @@ mapping = {
 small_mapping = {
     "compound" : 0,
     "case" : 1,
-    "dep" : 2,
-    "nummod" : 3,
-    "amod" : 4,
-    "det" : 5,
-    "punct" : 6
+    "nummod" : 2,
+    "amod" : 3,
+    "det" : 4,
+    "punct" : 5
 }
 
 def dependenciesVector(sentence):
@@ -210,5 +211,6 @@ print(vector)
 
 
 def feature_names():
-    return map( (lambda x: "dep_"+x), small_mapping.keys())
+    s_big = sorted(small_mapping.items(), key=operator.itemgetter(1))
+    return ["dep_"+s[0] for s in s_big]
 # check_pickle()

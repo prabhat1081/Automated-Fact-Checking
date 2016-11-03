@@ -1,5 +1,5 @@
 import extractors.tokenizer as tokenizer
-
+import operator
 
 tagset = ["$", "``", "''", "(", ")", ",", "--", ".", ":", "CC", "CD" , "DT", "EX", "FW",
             "IN", "JJ", "JJR", "JJS", "LS","MD", "NN", "NNP", "NNPS", "NNS", "PDT", "POS",
@@ -25,4 +25,5 @@ def pos_features(text):
 
 
 def feature_names():
-    return map( (lambda x: "pos_"+x), tag_mapping.keys())
+    s_big = sorted(tag_mapping.items(), key=operator.itemgetter(1))
+    return ["pos_"+s[0] for s in s_big]

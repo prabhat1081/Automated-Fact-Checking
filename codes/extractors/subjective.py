@@ -1,5 +1,6 @@
 from nltk.stem.porter import PorterStemmer
 import extractors.tokenizer as tokenizer
+import operator
 
 stemmer = PorterStemmer()
 
@@ -41,9 +42,11 @@ def subjective_feature(text):
     parsed = tokenizer.parse(text)
     cnt_strong = 0
     cnt_weak = 0
+    length = 0
     for sentence in parsed:
         toks = sentence['tokens']
         for tokeninfo in toks:
+            length += 1
             word = tokeninfo['word']
             postag = tokeninfo['pos']
             stemmed = stemmer.stem(word)
@@ -65,8 +68,8 @@ def subjective_feature(text):
                         else:
                             cnt_weak =  cnt_weak + 1
                         break
-    return [cnt_weak, cnt_strong]
+    return [cnt_weak, cnt_strong,length ]
 
 
 def feature_names():
-    return ["sub_weak", "sub_strong"]
+    return ["sub_weak", "sub_strong", "length"]
