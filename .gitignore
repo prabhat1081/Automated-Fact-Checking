@@ -97,4 +97,3 @@ stanford-corenlp-full-2015-12-09
 *.twords
 infoboxEdges.txt
 *.swp
-*.pkl
