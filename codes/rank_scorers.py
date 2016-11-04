@@ -204,6 +204,16 @@ def ndcg_from_ranking(y_true, ranking):
     best = dcg_from_ranking(y_true, best_ranking[:k])
     return dcg_from_ranking(y_true, ranking) / best
 
+def all_score(y_true, y_score, ks = [10,20]):
+    all_scores = [] 
+    for k in ks:
+        patk = ranking_precision_score(y_true, y_score, k)
+        avgpatk = average_precision_score(y_true, y_score, k)
+        ndcgatk = ndcg_score(y_true, y_score, k)
+        all_scores.append((patk, avgpatk, ndcgatk))
+    return all_scores
+
+
 
 if __name__ == '__main__':
 

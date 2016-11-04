@@ -56,5 +56,5 @@ class StanfordCoreNLP:
             pass
         return output
 #print("here")
-a = StanfordCoreNLP("http://10.5.18.109:9000")
-a.annotate("   ")
+#a = StanfordCoreNLP("http://10.5.18.109:9000")
+#a.annotate("  jj ")

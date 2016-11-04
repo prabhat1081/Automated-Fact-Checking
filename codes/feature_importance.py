@@ -6,6 +6,12 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 from sklearn.ensemble import ExtraTreesClassifier
 
+from sklearn.feature_selection import SelectFromModel
+
+from sklearn.decomposition import PCA
+from sklearn.svm import SVC
+from sklearn.model_selection import StratifiedKFold
+from sklearn.feature_selection import RFECV
 
 
 def plot_feature_importance(X, y, names):
@@ -36,5 +42,27 @@ def plot_feature_importance(X, y, names):
     plt.xlim([-1, X.shape[1]])
     plt.show()
 
-def get_selector(name):
-	return None
+def get_selector(name, k=50):
+	if(name == "PCA"):
+		return PCA(n_componenets=k)
+	if(name == "gini"):
+		forest = ExtraTreesClassifier(n_estimators=250,random_state=785)
+		return SelectFromModel(forest, threshold="1.2*mean")
+	if(name == "rfecv"):
+		return RFECV(estimator=svc, step=1, cv=StratifiedKFold(2),
+	              scoring='accuracy')
+
+
+
+
+def recursive_elimination(X, y):
+	# Create the RFE object and compute a cross-validated score.
+	svc = SVC(kernel="linear")
+	# The "accuracy" scoring is proportional to the number of correct
+	# classifications
+	rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2),
+	              scoring='accuracy')
+	rfecv.fit(X, y)
+
+	print("Optimal number of features : %d" % rfecv.n_features_)
+	
