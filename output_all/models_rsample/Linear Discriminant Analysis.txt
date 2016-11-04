@@ -1,0 +1,13 @@
+Linear Discriminant Analysis
+             precision    recall  f1-score   support
+
+        0.0       0.98      0.73      0.84      2939
+        1.0       0.08      0.68      0.15       108
+
+avg / total       0.95      0.73      0.81      3047
+NDCG@ 10 = 0.312049077222
+NDCG@ 50 = 0.26306201824
+NDCG@ 100 = 0.269199621482
+NDCG@ 500 = 0.448364128749
+NDCG@ 1000 = 0.524906553996
+NDCG= 0.663235034325

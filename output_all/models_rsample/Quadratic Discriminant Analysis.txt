@@ -1,0 +1,13 @@
+Quadratic Discriminant Analysis
+             precision    recall  f1-score   support
+
+        0.0       0.97      0.96      0.96      2939
+        1.0       0.15      0.21      0.18       108
+
+avg / total       0.94      0.93      0.94      3047
+NDCG@ 10 = 0.173186633348
+NDCG@ 50 = 0.199459550314
+NDCG@ 100 = 0.168363750041
+NDCG@ 500 = 0.370251186831
+NDCG@ 1000 = 0.492543472698
+NDCG= 0.610521875213

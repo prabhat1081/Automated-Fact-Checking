@@ -35,3 +35,6 @@ def plot_feature_importance(X, y, names):
     plt.xticks(range(X.shape[1]), ordered_names)
     plt.xlim([-1, X.shape[1]])
     plt.show()
+
+def get_selector(name):
+	return None
