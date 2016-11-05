@@ -26,8 +26,8 @@ d = {
 
 	# Ensemble
 
-	"balance_cascade":		ensemble.BalanceCascade(),	#Create an ensemble of balanced sets by iteratively under-sampling the imbalanced dataset using an estimator.
-	"easy_ensemble":		ensemble.EasyEnsemble(random_state=557)	#Create an ensemble sets by iteratively applying random under-sampling.
+	"balance_cascade":		ensemble.BalanceCascade(classifier="linear-svm", n_max_subset=10),	#Create an ensemble of balanced sets by iteratively under-sampling the imbalanced dataset using an estimator.
+	"easy_ensemble":		ensemble.EasyEnsemble(random_state=557, n_subsets=50)	#Create an ensemble sets by iteratively applying random under-sampling.
 
 
 }

@@ -35,7 +35,7 @@ def ranking_precision_score(y_true, y_score, k=10):
     n_relevant = np.sum(y_true == pos_label)
 
     # Divide by min(n_pos, k) such that the best achievable score is always 1.0.
-    return float(n_relevant) / min(n_pos, k)
+    return float(n_relevant) / k#min(n_pos, k)
 
 
 def average_precision_score(y_true, y_score, k=10):

@@ -5,6 +5,7 @@ import scipy
 import pickle
 import os
 
+from collections import Counter
 
 from time import time
 from collections import defaultdict
@@ -55,6 +56,8 @@ from imblearn.pipeline import Pipeline as im_Pipeline
 import rank_scorers
 import sampler
 import feature_importance
+import useClaimBuster
+import dataset_utils
 
 
 basepath = "/home/bt1/13CS10060/btp"
@@ -346,7 +349,97 @@ def split_data(X,y, index, frac=0.2):
 
     print(np.shape(X_train))
 
-    return X_train, X_test, y_train, y_test, index_train, index_test
+    p = np.random.permutation(len(X_train))
+    test_p = np.random.permutation(len(X_test))
+
+    return X_train[p], X_test[test_p], y_train[p], y_test[test_p], index_train[p], index_test[test_p]
+
+
+
+def evaluate(X_test, y_test, index_test, clf, name):
+
+    y_hat = clf.predict(X_test)
+    report = metrics.classification_report(y_test, y_hat)
+    #print(str(score))
+    f = open(working_dir + "/" + name + '.txt', 'w')
+    f.write(name+"\n")
+    f.write(report)
+    print(report)
+
+    try:
+        plot_ROC_curve(metrics.roc_curve(y_test, clf.decision_function(X_test), pos_label=1))
+        plot_PR_curve(metrics.precision_recall_curve(y_test,clf.decision_function(X_test), pos_label=1 )) 
+    except:
+        pass
+
+    try:
+        y_prob = clf.predict_proba(X_test)[:,1]
+    except:
+        pass
+
+    ks = [10,20,30,40,50,60,70,80,90,100,200,300,500,1000]
+
+    allscores = rank_scorers.all_score(y_test, y_prob, ks)
+
+    
+    for i,k in enumerate(ks):
+        print(k,round(allscores[i][0],3),round(allscores[i][1],3),round(allscores[i][2],3), sep="\t")
+
+    #print(allscores)
+
+
+    for tag, score, sent in zip(y_test, y_prob, sent_list):
+        print(tag, score, sent, sep="\t")
+
+    buster_prob = dataset_utils.get_buster_score(index_test)
+
+    allscores_buster = rank_scorers.all_score(y_test, buster_prob, ks)
+
+    # for tag, score, sent in zip(y_test, buster_prob, sent_list):
+    #     print(tag, score, sent, sep="\t")
+    print("ClaimBuster")
+    for i,k in enumerate(ks):
+        print(k,round(allscores_buster[i][0],3),round(allscores_buster[i][1],3),round(allscores_buster[i][2],3), sep="\t")
+
+
+def ensemble_train(X,y, working_dir):
+    ees = sampler.get_sampler('balance_cascade')
+    X_res, y_res = ees.fit_sample(X,y)
+    name = "svm_bcascade"
+
+    try:
+        with open(working_dir + "/" + name  + '.pkl', 'rb') as f1:
+            clf = pickle.load(f1)
+    except:
+        # scores = cross_val_score(clf, X, y, cv=4, scoring="roc_auc")
+        # print("Name %s ROC_AUC: %0.2f (+/- %0.2f)" % (name, scores.mean(), scores.std() * 2))
+        clf = []
+        for i in range(len(X_res)):
+            print(Counter(y_res[i]))
+            clfi = SVC(kernel="linear", probability=True)
+            #clfi=AdaBoostClassifier()
+            clfi.fit(X_res[i], y_res[i])
+            clf.append(clfi)
+            scores = cross_val_score(clfi, X_res[i], y_res[i], cv=4, scoring="roc_auc")
+            print("Name %s ROC_AUC: %0.2f (+/- %0.2f)" % (name, scores.mean(), scores.std() * 2))
+        with open(working_dir + "/" + name + '.pkl', 'wb') as f1:
+            pickle.dump(clf, f1)  
+    return clf
+
+def ensemble_predict_proba(clf, X):
+    y_proba = []
+    for clfi in clf:
+        y_probai = clfi.predict_proba(X)[:,-1]
+        y_proba.append(y_probai)
+
+    y_proba = np.asarray(y_proba)
+
+    y_proba_mean = np.mean(y_proba, axis=0)
+
+    y_hat = np.round(y_proba_mean)
+
+    return y_proba_mean, y_hat
+
 
 
 
@@ -355,7 +448,8 @@ def main(working_dir, args):
     f_names, X,y, index = load_dataset([workingdir+"/features.ff"], [workingdir+"/index.txt"])
 
     print(len(X), len(y), f_names)
-
+    
+    name = "svm_bcascade"
     X = np.asarray(X)
     y = np.asarray(y)
 
@@ -365,11 +459,58 @@ def main(working_dir, args):
     X_train, X_test, y_train, y_test, index_train, index_test = split_data(X, y, index)
     # gridSearch(X,y, working_dir)
 
+    '''
     # exit(0)
     #sampler= EasyEnsemble()
 
     #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=44)
     #exit(0)
+
+    fr = open(working_dir+"/"+name+"report.txt", "w")
+    clf = ensemble_train(X_train, y_train, working_dir)
+    y_prob, y_hat = ensemble_predict_proba(clf, X_test)
+
+    report = metrics.classification_report(y_test, y_hat)
+    #print(str(score))
+    print(report)
+    print(report, file=fr)
+
+    #evaluate(X_test, y_test, index_test, clf, name) 
+
+    ks = [10,20,30,40,50,60,70,80,90,100,200,300,500,1000]
+
+    allscores = rank_scorers.all_score(y_test, y_prob, ks)
+
+    
+    for i,k in enumerate(ks):
+        print(k,round(allscores[i][0],3),round(allscores[i][1],3),round(allscores[i][2],3), sep="\t")
+        print(k,round(allscores[i][0],3),round(allscores[i][1],3),round(allscores[i][2],3), sep="\t", file=fr)
+
+    #print(allscores)
+    
+    sent_list = [dataset_utils.get_sentence(idx) for idx in index_test]
+    f = open(working_dir+"/"+name+"ranks.txt", "w")
+    for tag, score, sent in zip(y_test, y_prob, sent_list):
+        print(tag, score, sent, sep="\t", file=f)
+
+    buster_prob = dataset_utils.get_buster_score(index_test)
+
+    allscores_buster = rank_scorers.all_score(y_test, buster_prob, ks)
+
+    # for tag, score, sent in zip(y_test, buster_prob, sent_list):
+    #     print(tag, score, sent, sep="\t")
+    print("ClaimBuster")
+    for i,k in enumerate(ks):
+        print(k,round(allscores_buster[i][0],3),round(allscores_buster[i][1],3),round(allscores_buster[i][2],3), sep="\t")
+        print(k,round(allscores_buster[i][0],3),round(allscores_buster[i][1],3),round(allscores_buster[i][2],3), sep="\t", file=fr)
+
+
+    exit(0)
+    '''
+
+
+
+
 
 
     pipe_components = []
@@ -386,11 +527,11 @@ def main(working_dir, args):
 
     pipe_components.append(None)
 
-    for name, clf in zip(names, classifiers):
+    for name, clf in zip(names[1:2], classifiers[1:2]):
         print(name)
         pipe_components[-1] = ('classification', clf)
         clf = im_Pipeline(pipe_components)
-        print(clf)
+        #print(clf)
         try:
             with open(working_dir + "/" + name + '.pkl', 'rb') as f1:
                 clf = pickle.load(f1)
@@ -399,40 +540,8 @@ def main(working_dir, args):
             # print("Name %s ROC_AUC: %0.2f (+/- %0.2f)" % (name, scores.mean(), scores.std() * 2))
             clf.fit(X_train, y_train)
             with open(working_dir + "/" + name + '.pkl', 'wb') as f1:
-                pickle.dump(clf, f1)
-
-        print(clf.classes_)
-
-        y_hat = clf.predict(X_test)
-        report = metrics.classification_report(y_test, y_hat)
-        #print(str(score))
-        f = open(working_dir + "/" + name + '.txt', 'w')
-        f.write(name+"\n")
-        f.write(report)
-        print(report)
-
-        try:
-            plot_ROC_curve(metrics.roc_curve(y_test, clf.decision_function(X_test), pos_label=1))
-            plot_PR_curve(metrics.precision_recall_curve(y_test,clf.decision_function(X_test), pos_label=1 )) 
-        except:
-            pass
-
-        try:
-            y_prob = clf.predict_proba(X_test)[:,1]
-        except:
-            continue
-
-        y_ranks = np.argsort(y_prob)[::-1]
-
-        for k in [10,50,100,500, 1000]:
-
-            print("NDCG@",k,"=",rank_scorers.ndcg_from_ranking(y_test, y_ranks[:k]))
-            print("NDCG@",k,"=",rank_scorers.ndcg_from_ranking(y_test, y_ranks[:k]), file=f)
-
-        print("NDCG=",rank_scorers.ndcg_from_ranking(y_test, y_ranks))
-        print("NDCG=",rank_scorers.ndcg_from_ranking(y_test, y_ranks), file=f)
-
-          
+                pickle.dump(clf, f1)  
+        evaluate(X_test, y_test, index_test, clf, name)        
 
 
 
@@ -441,7 +550,7 @@ if __name__ == '__main__':
     import sys
 
 
-    working_dir = workingdir+"/modelsdeb_ENNsample" #os.argv[-1]
+    working_dir = workingdir+"/models_rsample" #os.argv[-1]
     try:
         os.makedirs(working_dir)
     except:

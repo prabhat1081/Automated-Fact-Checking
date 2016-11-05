@@ -2,9 +2,13 @@ from gensim.models import Word2Vec
 import extractors.tokenizer as tokenizer
 #import tokenizer
 import numpy as np
+import os
 
 
-model = Word2Vec.load_word2vec_format('embeddings/google_news_300.bin', binary=True)
+basepath = "/home/bt1/13CS10060/btp"
+datapath = basepath+"/ayush_dataset"
+
+#model = Word2Vec.load_word2vec_format('embeddings/google_news_300.bin', binary=True)
 
 NDIM = 300
 def features(text):
@@ -28,5 +32,24 @@ def features(text):
 def feature_names():
 	return ["embed_"+str(i) for i in range(NDIM)]
 
-print(features("Word is a game"))
+def get_stopwords(filename):
+    words = open(filename, "r")
+    return [ word.strip() for word in words.readlines()]
+
+stopwords = get_stopwords(os.path.join(datapath, "stopwords.txt"))
+
+def sentence_sim(sent1, sent2):
+	parsed = tokenizer.parse(sent1.strip())
+	sent1_ = [tokeninfo['word'] for sentence in parsed 
+		for tokeninfo in sentence['tokens'] if tokeninfo['word'] not in stopwords]
+	parsed = tokenizer.parse(sent2.strip())
+	sent2_ = [tokeninfo['word'] for sentence in parsed 
+		for tokeninfo in sentence['tokens'] if tokeninfo['word'] not in stopwords]
+
+	return  model.wmdistance(sent1_, sent2_)
+
+
+
+#print(features("Word is a game"))
+
 
