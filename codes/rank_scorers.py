@@ -82,7 +82,7 @@ def average_precision_score(y_true, y_score, k=10):
     if n_pos == 0:
         return 0
 
-    return score / n_pos
+    return score / min(n_pos,k)
 
 
 def dcg_score(y_true, y_score, k=10, gains="exponential"):

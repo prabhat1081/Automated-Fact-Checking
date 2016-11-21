@@ -117,6 +117,47 @@ def get_buster_score(indexes):
 	return [scoremap[(index[0], index[1], index[2])] for index in indexes]
 
 
+def evaluate_buster():
+	global dataset
+	import pickle
+	if(dataset is None):
+		dataset = initialize_map()
+	fname = os.path.join(basepath, "ayush_dataset","buster_scores", "debate")
+	ids = [3,4,13,14]
+	scoremap = {}
+	scores = []
+	label = []
+	for id in ids:
+		fnamei = fname + str(id)
+		busterfile = open(fnamei, "r")
+		s = busterfile.readlines()
+		debate = dataset[dataset.DebateId == id]
+		#print(debate)
+		i = 0
+		for _,row in debate.iterrows():
+			#print(row)
+			#print(row['ID'], row['Id_1'])
+			scores.append(s[i].strip().split("\t")[0].strip())
+			if(row['Marked'] == "Y"):
+				label.append(1)
+			else:
+				label.append(0)
+			idx = (row['DebateId'], row['ID'], row['Id_1'])
+			scoremap[idx] = s[i].strip().split("\t")[0].strip()
+			i = i + 1
+
+	o = open(os.path.join(basepath, "ayush_dataset","buster_scores", "score_class.txt"), "w")
+	for score, cclass in zip(scores, label):
+		print(score, cclass, sep="\t", file=o)
+
+
+
+evaluate_buster()
+
+
+
+
+
 
 
 

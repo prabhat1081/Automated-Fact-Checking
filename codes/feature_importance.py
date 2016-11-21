@@ -12,10 +12,13 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
-
+from imblearn.under_sampling import (EditedNearestNeighbours, RandomUnderSampler,
+                                     RepeatedEditedNearestNeighbours)
 
 def plot_feature_importance(X, y, names):
 
+    rs = RandomUnderSampler(random_state=55)
+    X,y = rs.fit_sample(X,y)
     # Build a forest and compute the feature importances
     forest = ExtraTreesClassifier(n_estimators=250,
                                 random_state=0)
@@ -25,21 +28,24 @@ def plot_feature_importance(X, y, names):
     std = np.std([tree.feature_importances_ for tree in forest.estimators_],
                axis=0)
     indices = np.argsort(importances)[::-1]
+    indices = indices[:60]
 
     # Print the feature ranking
     print("Feature ranking:")
 
-    for f in range(X.shape[1]):
+    for f in range(60):
         print("%d. %s (%f)" % (f + 1, names[indices[f]], importances[indices[f]]))
 
     # Plot the feature importances of the forest
     plt.figure()
     plt.title("Feature importances")
-    plt.bar(range(X.shape[1]), importances[indices],
-         color="r", yerr=std[indices], align="center")
+    plt.bar(range(60), importances[indices],
+         color="black", yerr=std[indices], align="center")
     ordered_names = [names[ii] for ii in indices]
-    plt.xticks(range(X.shape[1]), ordered_names)
-    plt.xlim([-1, X.shape[1]])
+    plt.xticks(range(60), ordered_names[:60] ,rotation="vertical")
+    plt.xlim([-1, 60])
+    plt.ylim([0,0.062])
+    plt.tight_layout()
     plt.show()
 
 def get_selector(name, k=50):
@@ -54,15 +60,15 @@ def get_selector(name, k=50):
 
 
 
+def recursive_elimination(X, y, X_t):
+    # Create the RFE object and compute a cross-validated score.
+    svc = SVC(kernel="linear")
+    # The "accuracy" scoring is proportional to the number of correct
+    # classifications
+    rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2),scoring='roc_auc')
+    X_new = rfecv.fit_transform(X,y)
+    print("Optimal number of features : %d" % rfecv.n_features_)
+    return X_new, rfecv.transform(X_t)
 
-def recursive_elimination(X, y):
-	# Create the RFE object and compute a cross-validated score.
-	svc = SVC(kernel="linear")
-	# The "accuracy" scoring is proportional to the number of correct
-	# classifications
-	rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2),
-	              scoring='accuracy')
-	rfecv.fit(X, y)
-
-	print("Optimal number of features : %d" % rfecv.n_features_)
+	
 	
