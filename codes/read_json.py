@@ -30,8 +30,8 @@ def read_dataset():
 					'''
 			checked.extend(sents)
 		else:
-                        sents = sentence_tokenizer.tokenize(d['sent'].strip())
-                        notchecked.extend(sents)
+			sents = sentence_tokenizer.tokenize(d['sent'].strip())
+			notchecked.extend(sents)
 
 	cfile = open(basepath+"/ayush_dataset/c1file.txt", "w")
 	ncfile = open(basepath+"/ayush_dataset/nc1file.txt", "w")

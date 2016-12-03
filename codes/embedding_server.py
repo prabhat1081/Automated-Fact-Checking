@@ -13,7 +13,13 @@ server = SimpleXMLRPCServer(("0.0.0.0", 9997),
 server.register_introspection_functions()
 
 def getvector(word):
-	return model[word]
+	result = []
+	try:
+		result = model[word].tolist()
+	except:
+		print("Word "+word+"not present.")
+		pass
+	return result
 
 
 server.register_instance(model)

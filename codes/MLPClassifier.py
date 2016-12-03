@@ -544,16 +544,16 @@ def main(working_dir, args):
     index = np.asarray(index)
     f_names = np.asarray(f_names)
     start = 300
-    X_part, y = normalize_topic_values(X[start:],y)
+    X_part, y = normalize_topic_values(X[:,start:],y)
 
-    X[start:] = X_part[:]
+    X[:,start:] = X_part[:,:]
 
     print(np.shape(X), np.shape(f_names))
     print(X[0])
     # sel_feats = np.asarray(list(range(0,300)))# + list(range(413,414)))
     #sel_feats = np.asarray(list(range(300,len(X[0]))))
     sel_feats = np.asarray(list(range(0,300)))
-    X_posonly = X[:,sel_feats]
+    X_posonly = X[:,:300]
 
     print(np.shape(X_posonly))
     f_names = f_names[sel_feats] 
@@ -582,7 +582,7 @@ def main(working_dir, args):
 
 
 
-    #feature_importance.plot_feature_importance(X,y,f_names)
+    feature_importance.plot_feature_importance(X_posonly,y,f_names)
 
     #exit(0)
       
@@ -598,17 +598,20 @@ def main(working_dir, args):
     X_vis= X_train
 
 
-    # #Two subplots, unpack the axes array immediately
-    # f, ax1 = plt.subplots(1)
 
-    # ax1.scatter(X_vis[y_train == 0, 0], X_vis[y_train == 0, 1], label="Class #0", alpha=0.5,
-    #             edgecolor=almost_black, facecolor=palette[0], linewidth=0.15)
-    # ax1.scatter(X_vis[y_train == 1, 0], X_vis[y_train == 1, 1], label="Class #1", alpha=0.5,
-    #             edgecolor=almost_black, facecolor=palette[2], linewidth=0.15)
-    # ax1.set_title('Original set')
+    #Two subplots, unpack the axes array immediately
+    f, ax1 = plt.subplots(1)
+
+    ax1.scatter(X_vis[y_train == 0, 0], X_vis[y_train == 0, 1], label="Class #0", alpha=0.5,
+                edgecolor=almost_black, facecolor=palette[0], linewidth=0.15)
+    ax1.scatter(X_vis[y_train == 1, 0], X_vis[y_train == 1, 1], label="Class #1", alpha=0.5,
+                edgecolor=almost_black, facecolor=palette[2], linewidth=0.15)
+    ax1.set_title('Original set')
 
 
-    # plt.show()
+    plt.show()
+
+    exit(0)
 
     # gridSearch(X,y, working_dir)
     rsampler = RandomUnderSampler(random_state=487)
