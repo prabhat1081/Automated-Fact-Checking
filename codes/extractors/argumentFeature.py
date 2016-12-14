@@ -1,14 +1,18 @@
 import os
 import pandas as pd
-arguingWords = ['no', 'did not', 'not true', 'not correct', 'never', 'contrary', 'objection', 'converse', 'reverse', 'refuse', 'disapprove', 'decline', 'reject', 'wrong', 'incorrect', 'error', 'misguide', 'mistake', 'untrue', 'unfair', 'absurd', 'foolish', 'illogical', 'irrational', 'nonsense', 'stupid', 'silly', 'unreasonable', 'idiotic', 'inane', 'insane']
+arguingWords = [ 'did not', 'not true', 'not correct', 'never', 
+'contrary', 'objection', 'converse', 'reverse', 'refuse', 'disapprove', 
+'decline', 'reject', 'wrong', 'incorrect', 'error', 'misguide', 'mistake',
+ 'untrue', 'unfair', 'absurd', 'foolish', 'illogical', 'irrational', 'nonsense', 
+ 'stupid', 'silly', 'unreasonable', 'idiotic', 'inane', 'insane']
 index = None
 dataset = None
 basepath = "/home/bt1/13CS10060/btp"
 
 def isArguing(block):
 	if len(block)<=2:
-		for words in block.iloc[0]['Sentence'].split(' '):
-			if words in arguingWords:
+		for words in arguingWords:
+			if words in block.iloc[0]['Sentence']:
 				return True
 	return False
 
@@ -37,15 +41,16 @@ def featureVal(indexId):
 		nextBlock = itsDebate[itsDebate.ID == bid+1]
 		if len(nextBlock) > 0:
 			if nextBlock.iloc[0]['Speaker'] != itsBlock.iloc[0]['Speaker']:
-				return isArguing(nextBlock),nextBlock.iloc[0]['Sentence']
-	return False,''
+				return isArguing(nextBlock),nextBlock.iloc[0]['Sentence'], itsBlock.iloc[0]['Marked'] == "Y" or nextBlock.iloc[0]['Marked'] == "Y" 
+	return False,'', False
 
 def test(dataset_utils):
 	initIndexAndDataset()
 	for indexId in range(len(index)):
-		t,s = featureVal(indexId)
+		t,s, m = featureVal(indexId)
 		if t:
 			print(dataset_utils.get_sentence(index[indexId]))
 			print(s)
-			print()
+			print(m)
+			input("\n")
 			# print(t)

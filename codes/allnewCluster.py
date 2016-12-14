@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-
+import extractors.tokenizer
 from sklearn import decomposition
 from sklearn import datasets
 from sklearn import ensemble
@@ -23,6 +23,8 @@ from imblearn.under_sampling import RandomUnderSampler
 import seaborn as sns
 sns.set()
 
+
+exit(0)
 # Define some color for the plotting
 almost_black = '#262626'
 palette = sns.color_palette()

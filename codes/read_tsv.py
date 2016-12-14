@@ -39,13 +39,34 @@ for line in f:
 	cols = line.split("\t")[:-2]
 	d = dict(zip(colnames, cols))
 
-	d['Embeds'] = return_embeds(d['Sentence'])
+	output = tokenizer.openie(d['Sentence'])
 
-	samples.append(d)
-	if(s == 0):
-		print(d)
-		input("hehe")
-		s = 1
+	
+
+
+	if(d['Marked'] == "Y"):
+		print(d['Sentence'], d['Marked'])
+
+		for sent in output:
+			print (sent.keys())
+			ies = sent['openie']
+			for ie in ies:
+				print(ie['subject'], " | ", ie['object']," | ", ie['relation'])
+
+
+		input("Press key")
+
+
+
+
+
+	# d['Embeds'] = return_embeds(d['Sentence'])
+
+	# samples.append(d)
+	# if(s == 0):
+	# 	print(d)
+	# 	input("hehe")
+	# 	s = 1
 
 
 
@@ -66,13 +87,13 @@ for line in f:
 	# 	print(d['DebateId'], d['ID'], d['Id-1'], file=exnofile)
 
 
-	#print(json.dumps(d))
-data = {"samples":samples}
+# 	#print(json.dumps(d))
+# data = {"samples":samples}
 
 
-import json
-dtafilename = os.path.join(basepath, "ayush_dataset", "data.json")
-with open(dtafilename, 'w') as outfile:
-    json.dump(data, outfile)
+# import json
+# dtafilename = os.path.join(basepath, "ayush_dataset", "data.json")
+# with open(dtafilename, 'w') as outfile:
+#     json.dump(data, outfile)
 
 

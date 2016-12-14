@@ -22,3 +22,21 @@ def dependency_parse(text):
 
 
 
+
+
+def openie(text):
+    #print(text)
+    output = nlp.annotate(text, properties={
+        'annotators': 'tokenize,ssplit,pos,lemma, depparse, parse, natlog, openie',
+        'outputFormat': 'json'
+    })
+
+    
+    return output['sentences']
+
+
+
+
+
+
+
