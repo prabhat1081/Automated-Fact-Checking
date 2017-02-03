@@ -9,9 +9,12 @@ names = ["compound", "neg", "neu", "pos"]
 def feature_names():
 	return names
 
+def feature_name_type():
+	return [(n,'REAL') for n in names]
 
 
-def feature(text):
+
+def features(text):
 	from nltk import tokenize
 	sentences = tokenize.sent_tokenize(text)
 	sid = SentimentIntensityAnalyzer()
@@ -27,4 +30,4 @@ def feature(text):
 
 
 print("Testing Sentiment")
-print(feature("It is a cold day. I hate him"))
+print(features("It is a cold day. I hate him"))

@@ -27,3 +27,10 @@ def pos_features(text):
 def feature_names():
     s_big = sorted(tag_mapping.items(), key=operator.itemgetter(1))
     return ["pos_"+s[0] for s in s_big]
+
+def feature_name_type():
+    s_big = sorted(tag_mapping.items(), key=operator.itemgetter(1))
+    return [("pos_"+s[0], 'NUMERIC') for s in s_big]
+
+def features(text):
+    return pos_features(text)

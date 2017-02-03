@@ -73,3 +73,9 @@ def subjective_feature(text):
 
 def feature_names():
     return ["sub_weak", "sub_strong", "length"]
+
+def feature_name_type():
+    return [("sub_weak", 'NUMERIC'), ("sub_strong", 'NUMERIC'), ("length", 'NUMERIC')]
+
+def features(text):
+    return subjective_feature(text)

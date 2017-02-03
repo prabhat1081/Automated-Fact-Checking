@@ -21,6 +21,15 @@ def dependency_parse(text):
     return output
 
 
+def ner(text):
+    #print(text)
+    output = nlp.annotate(text, properties={
+        'annotators': 'tokenize,ssplit,pos,lemma, ner',
+        'outputFormat': 'json'
+    })
+
+    
+    return output['sentences']
 
 
 

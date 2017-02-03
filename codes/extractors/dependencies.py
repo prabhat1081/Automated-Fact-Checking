@@ -206,11 +206,21 @@ def dependenciesVector(sentence):
     return vector
 
 vector = dependenciesVector('1.5 million jobs created during the worst economic time this country has had since the Great Depression while the rest of the country lost 400,000 jobs.')
+print("Testing: Dependencies: ")
 print(vector)
+
+
+def features(sentence):
+    return dependenciesVector(sentence)
 
 
 
 def feature_names():
     s_big = sorted(small_mapping.items(), key=operator.itemgetter(1))
     return ["dep_"+s[0] for s in s_big]
+
+
+def feature_name_type():
+    s_big = sorted(small_mapping.items(), key=operator.itemgetter(1))
+    return [("dep_"+s[0], 'NUMERIC') for s in s_big]
 # check_pickle()

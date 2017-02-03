@@ -9,13 +9,6 @@ basepath = "/home/bt1/13CS10060/btp"
 filename = os.path.join(basepath, "ayush_dataset", "annotated_single_all.tsv")
 
 
-
-f = open(filename, "r")
-
-colnames = f.readline().split("\t")[:-2]
-
-print(colnames)
-
 done = 0
 left = 0
 
@@ -32,29 +25,54 @@ def return_embeds(sent):
 	return feature.tolist()
 
 
-s = 0
-
-samples = []
-for line in f:
-	cols = line.split("\t")[:-2]
-	d = dict(zip(colnames, cols))
-
-	output = tokenizer.openie(d['Sentence'])
-
-	
 
 
-	if(d['Marked'] == "Y"):
-		print(d['Sentence'], d['Marked'])
-
-		for sent in output:
-			print (sent.keys())
-			ies = sent['openie']
-			for ie in ies:
-				print(ie['subject'], " | ", ie['object']," | ", ie['relation'])
 
 
-		input("Press key")
+def get_instance():
+	f = open(filename, "r")
+
+	colnames = f.readline().split("\t")[:-2]
+
+	print("Columns in dataset:")
+	print(colnames)
+
+	yield colnames
+
+	for line in f:
+		cols = line.split("\t")[:-2]
+		d = dict(zip(colnames, cols))
+		class_ = 0
+		if(d['Marked'] == "Y"):
+			class_ = 1
+		yield cols, d['Sentence'], class_
+
+
+
+def openie_use():
+	s = 0
+
+	samples = []
+	for line in f:
+		cols = line.split("\t")[:-2]
+		d = dict(zip(colnames, cols))
+
+		output = tokenizer.openie(d['Sentence'])
+
+		
+
+
+		if(d['Marked'] == "Y"):
+			print(d['Sentence'], d['Marked'])
+
+			for sent in output:
+				print (sent.keys())
+				ies = sent['openie']
+				for ie in ies:
+					print(ie['subject'], " | ", ie['object']," | ", ie['relation'])
+
+
+			input("Press key")
 
 
 

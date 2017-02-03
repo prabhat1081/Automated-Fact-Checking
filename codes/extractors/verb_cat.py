@@ -17,8 +17,11 @@ classword = {
 def feature_names():
     return ["verbcat_"+ i for i in names]
 
+def feature_name_type():
+    return [("verbcat_"+ i, 'NUMERIC') for i in names]
 
-def feature(text):
+
+def features(text):
 	parsed = tokenizer.parse(text)
 	c = Counter()
 	for sentence in parsed:
@@ -40,7 +43,7 @@ def feature(text):
 	return feature
 
 print("Testing: Verb_Cat")
-print(feature("I said this and doubted sensing that"))
+print(features("I said this and doubted sensing that"))
 
 
             

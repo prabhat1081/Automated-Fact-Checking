@@ -20,6 +20,7 @@ def features(text):
 	global model
 	if(model is None):
 		model = Word2Vec.load_word2vec_format('embeddings/google_news_300.bin', binary=True)
+		print("Word vector model Loaded")
 	parsed = tokenizer.parse(text.strip())
 	embeds = []
 	for sentence in parsed:
@@ -37,10 +38,17 @@ def features(text):
 					pass
 
 	embeds = np.asarray(embeds)
-	return np.mean(embeds, axis=0)
+	if(len(embeds) > 0):
+		return np.mean(embeds, axis=0)
+	else:
+		return np.zeros(NDIM)
 
 def feature_names():
 	return ["embed_"+str(i) for i in range(NDIM)]
+
+
+def feature_name_type():
+	return [("embed_"+str(i), "REAL") for i in range(NDIM)]
 
 
 def sentence_sim(sent1, sent2):

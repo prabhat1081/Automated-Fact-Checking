@@ -26,13 +26,47 @@ def LDATopicVector(text):
 		shell=True, stdout=DEVNULL)
 	with open(LDA_MODEL_DIRECTORY+TEST_FILE_NAME+'.theta') as f:
 		vector = f.read().strip()
-	vector = [float(x) for x in vector.split(' ')]
+	vector = [round(float(x),2) for x in vector.split(' ')]
 	# print vector
 	return vector
 
 vector = LDATopicVector('1.5 million jobs created during the worst economic time this country has had since the Great Depression while the rest of the country lost 400,000 jobs.')
+print("Testing: Topic")
 print(vector)
 
+
+def accumulate_batch(text=None):
+	if(text is None):
+		return accumulate_batch.batch
+	text = process_text(text)
+	if(accumulate_batch.batch is None):
+		accumulate_batch.batch = [text]
+	else:
+		accumulate_batch.batch.append(text)
+		# print('here')
+accumulate_batch.batch = None
+
+def run_batch():
+	batch = accumulate_batch()
+	print("topoc for :", len(batch))
+	tempfile = open(LDA_MODEL_DIRECTORY+BATCH_TEST_FILE_NAME, "w")
+	cnt = len(batch)
+	print(cnt, file=tempfile)
+	for ins in batch:
+		print(ins, file=tempfile)
+	tempfile.close()
+
+	subprocess.call(basepath + 'GibbsLDA++-0.2/src/lda -inf -dir '+LDA_MODEL_DIRECTORY+' -model model-final -niters 100 -dfile '+BATCH_TEST_FILE_NAME,
+		shell=True)
+
+	topicfile = open(LDA_MODEL_DIRECTORY+BATCH_TEST_FILE_NAME+'.theta', "r")
+
+	
+
+	for line in topicfile:
+		vector = list(map(lambda x: round(float(x),2), line.strip().split(' ')))
+		yield vector
+		
 
 def batch_LDATopicVector(filename):
 	f = open(filename, "r")
@@ -53,7 +87,7 @@ def batch_LDATopicVector(filename):
 	topicsall = []
 
 	for line in topicfile:
-		vector = map(float, line.strip().split(' '))
+		vector = map(lambda x: round(float(x),2), line.strip().split(' '))
 		topicsall.append(vector)
 
 	return topicsall
@@ -62,6 +96,12 @@ def batch_LDATopicVector(filename):
 def feature_names():
     return ["topic_"+ str(i) for i in range(20)]
 
+
+def feature_name_type():
+    return [("topic_"+ str(i), 'REAL') for i in range(20)]
+
+def features(text):
+	return LDATopicVector(text)
 
 
 

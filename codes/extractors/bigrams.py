@@ -13,6 +13,7 @@ stopwords = ["-lrb-","-rrb-", "...","---", "--", "ph"]#get_stopwords("stopwords.
 puncts = list("!';\",.?()`$")
 
 stopwords.extend(puncts)
+print("Puncts:")
 print(stopwords)
 
 
@@ -64,6 +65,7 @@ def load_bigrams(datapath, threshold, filename, stopwords):
         bigrams = generate_bigrams(threshold, filename, stopwords)
         with open(datapath + '/bigrams.pkl', 'wb') as f1:
             pickle.dump(bigrams, f1)
+    print("The bigrams:")
     print(len(bigrams))
     pp.pprint(bigrams)
     return bigrams
@@ -90,3 +92,12 @@ def bigram_feature(text):
 def feature_names():
     s_big = sorted(bigrams.items(), key=operator.itemgetter(1))
     return ["bi_"+s[0][0]+"__"+s[0][1] for s in s_big]
+
+def feature_name_type():
+    s_big = sorted(bigrams.items(), key=operator.itemgetter(1))
+    return [("bi_"+s[0][0]+"__"+s[0][1], 'NUMERIC') for s in s_big]
+
+def features(text):
+    return bigram_feature(text)
+
+
