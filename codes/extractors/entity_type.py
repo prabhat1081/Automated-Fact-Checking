@@ -27,14 +27,11 @@ def features(text):
 			# c[tokeninfo['ner']] += 1
 			ners.append(tokeninfo['ner'])
 		from itertools import groupby
-		print(ners)
 		ner = [x[0] for x in groupby(ners)]
-		print(ner)
 		c_dash = Counter(ner)
 		c += c_dash
 
 	feature = [0]*len(names)
-	print(c)
 	for i,name in enumerate(names):
 		feature[i] = c[name]
 
@@ -47,3 +44,4 @@ test2 = "They would repeal the Affordable Care Act, not improve it."
 
 print(features(test))
 print(features(test2))
+print(features(test+test2))

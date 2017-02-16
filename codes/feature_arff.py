@@ -114,7 +114,7 @@ def feature_topic():
     print("Completed")
 
 
-def generate_arff(extractors, split_arff=True):
+def generate_arff(extractors, name,split_arff=True):
     init()
     print("Testing: ")
     test_text = "1.5 million jobs created during the worst economic time this country has had since the Great Depression while the rest of the country lost 400,000 jobs."
@@ -148,12 +148,12 @@ def generate_arff(extractors, split_arff=True):
             if(count % 500 == 0):
                 dataset = {
                 'description': 'data_file',
-                'relation': 'liwc',
+                'relation': name,
                 'attributes': attributes,
                 'data': data_feat
                 }
                   
-                filename_data = "liwc/dataset_"+str(part)+".arff"  
+                filename_data = name+"_"+str(part)+".arff"  
                 f = open(filename_data,'w')
                 f.write(arff.dumps(dataset))
                 f.close()
@@ -170,9 +170,9 @@ def generate_arff(extractors, split_arff=True):
     print(len(data_feat))
               
     if(split_arff):
-        filename_data = "entity/dataset_"+str(part)+".arff"  
+        filename_data = name+"_"+str(part)+".arff"  
     else:
-        filename_data = "entity/dataset.arff"  
+        filename_data = name+".arff"  
     f = open(filename_data,'w')
     f.write(arff.dumps(dataset))
     f.close()
@@ -183,17 +183,95 @@ def generate_arff(extractors, split_arff=True):
 
 
 
+def similarity_feature():
+    print("Starting: ")
+    extractors = core_sentence
+    instances = read_tsv.get_instance()
+    colnames = next(instances)
+    colnames = [(c, 'STRING') for c in colnames]
+    attributes = core_sentence.feature_name_type()
+    attributes.append(("class_label", ['0','1']))
+    colnames.extend(attributes)
+    attributes = colnames
+
+    count = 0
+    part = 1
+    data_feat = []
+    block = []
+    block_text = []
+    block_no = -1
+    for instance_ in instances:
+        instance, text, class_ = instance_
+        if(instance[-2] != block_no):
+            # print("Block: " ,len(block), block_no)
+            block_no = instance[-2]
+            if(len(block) > 0):
+                features = core_sentence.features(block_text)
+                for i, bi in enumerate(block):
+                    instance, text, class_ = bi
+                    instance[3] = instance[3].replace(',', ";")
+                    features_ = [features[i], class_]
+                    instance.extend(features_)
+                    data_feat.append(instance)
+                # print(len(data_feat), block_no)
+            block = [instance_]
+            block_text = [text]
+        else:
+            block.append(instance_)
+            block_text.append(text)
+
+        count+=1
+        
+        if(count % 100 == 0):
+            print("Done: ",count)
+            
+
+    if(len(block) > 0):
+        features = core_sentence.features(block_text)
+        for i, bi in enumerate(block):
+            instance, text, class_ = bi
+            instance[3] = instance[3].replace(',', ";")
+            features_ = [features[i], class_]
+            instance.extend(features_)
+            data_feat.append(instance)
+
+
+    print(len(data_feat), len(data_feat[0]), len(attributes))
+    dataset = {
+    'description': 'data_file',
+    'relation': 'sent_similarity',
+    'attributes': attributes,
+    'data': data_feat
+    }
+      
+    filename_data = "dataset/similarity"+".arff"  
+    f = open(filename_data,'w')
+    f.write(arff.dumps(dataset))
+    f.close()
+    
+        
+    print("Completed")
+
+
+        
+
+
+
+
+
 
 if __name__ == '__main__':
     import sys
     module = sys.argv[-1]
     if(module == "all"):
-        generate_arff(extractors_)
+        generate_arff(extractors_, "all")
     elif(module == "topic"):
         feature_topic()
     elif(module == "liwc"):
-        generate_arff([liwc], False)
+        generate_arff([liwc],"liwc", False)
     elif(module == "entity"):
-        generate_arff([entity_type], False)
+        generate_arff([entity_type],"entity", False)
+    elif(module == "sim"):
+        similarity_feature()
     else:
         print("No such module existss")
